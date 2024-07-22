@@ -1,0 +1,115 @@
+
+.home{
+    background-color: white;
+    width: 80vw;
+    height: 80vh;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    margin: 10vh 10vw;
+    z-index: 0;
+    border: 2px solid black;
+}
+
+.nav{
+    background-color: black;
+    color: white;
+    padding: 15px 0px;
+    text-align: center;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.chat{
+    display: flex;
+}
+
+.left{
+    position: relative;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 50%;
+    height: 73vh;
+}
+
+.right{
+    position: relative;
+    border-bottom: 1px solid black;
+    z-index: 1;
+    width: 50%;
+    height: 73vh;
+    background-color: limegreen;
+}
+
+.send{
+    padding: 10px;
+    margin: 10px;
+    width: 50%;
+    text-wrap: wrap;
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 15px;
+    float: right;
+}
+
+.receive{
+    padding: 10px;
+    margin: 10px;
+    width: 50%;
+    text-wrap: wrap;
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 15px;
+    float: left;
+}
+
+
+.input-field{
+    width: 80%;
+    height: 50px;
+}
+
+.send-btn{
+    width: 20%;
+    height: 50px;
+}
+
+.messages{
+    height: 61vh;
+    overflow: auto;
+}
+
+.left-nav{
+    text-align: center;
+    background-color: blue;
+    color: white;
+    padding: 10px 0px;
+}
+
+.contacts{
+    height: 66vh;
+    overflow-y: auto;
+}
+
+.contact{
+    padding: 10px 20px;
+    margin: 0;
+    border: 1px solid black;
+    border-top: none;
+    width: 100%;
+}
+
+.contact:hover{
+    background-color: lime;
+}
+
+.list{
+    display: flex;
+    flex-direction: column;
+}
+
+.right-nav{
+    text-align: center;
+    background-color: purple;
+    color: white;
+    padding: 10px 0px;
+}
