@@ -1,0 +1,44 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.message{
+    font-size: medium;
+    font-weight: bolder;
+    display: none;
+    color: red;
+}
+
+.Register{
+    background-color: rgba(70, 68, 68,0.3);
+	padding: 40px;
+	border-radius: 5px;
+	box-shadow: 10px 10px 7px #000;
+    margin-top: 20vh;
+    opacity: 0.7;
+	width: 45vh;
+    color: aliceblue;
+    border-radius: 30px;
+}
+
+input{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 3vh;
+    width: 30vh;
+}
+
+label{
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+button{
+    padding: 10px 20px;
+}
+
+.Register:hover{
+    box-shadow: 20px 15px 7px #000;
+}
