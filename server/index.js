@@ -19,7 +19,7 @@ const server = http.createServer(app1)
 
 app.use(express.json())
 app.use(cors({
-    origin: ["https://chat-app-using-mern-stack.vercel.app/"],
+    origin: ["https://chat-app-using-mern-stack.vercel.app/","*"],
     credentials: true
 }))
 
