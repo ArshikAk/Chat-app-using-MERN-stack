@@ -8,11 +8,6 @@ const app = express()
 const http = require("http")
 const {Server} = require("socket.io")
 
-app.use(cors({
-    origin: ["https://chat-app-using-mern-stack.vercel.app/"],
-    credentials: true
-}))
-
 const server = http.createServer(app1)
 
 // const io = new Server(server , {
