@@ -17,6 +17,8 @@ const server = http.createServer(app1)
 //         }
 // })
 
+const port = process.env.port || 5173;
+
 app.use(express.json())
 app.use(cors({
     origin: true,
@@ -269,7 +271,7 @@ app.post("/getMsg",(req,res) => {
 
 
 
-app.listen(5173 , () => {
+app.listen(port , () => {
     console.log("server is running on port 5173")
 })
 
