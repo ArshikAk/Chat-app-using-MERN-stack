@@ -17,11 +17,11 @@ const server = http.createServer(app1)
 //         }
 // })
 
-const port = process.env.port || 5173;
+const port = process.env.PORT || 5173;
 
 app.use(express.json())
 app.use(cors({
-    origin: ["https://chat-app-using-mern-stack.vercel.app/"],
+    origin: ["https://chat-app-using-mern-stack.vercel.app"],
     methods: ["GET", "POST"],
     credentials: true
 }))
