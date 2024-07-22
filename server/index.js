@@ -9,16 +9,19 @@ const app1 = express()
 const http = require("http")
 const {Server} = require("socket.io")
 
-app1.use(cors())
+app1.use(cors({
+    origin: ["https://chat-app-using-mern-stack.vercel.app/"],
+    credentials: true
+}))
 
 const server = http.createServer(app1)
 
-const io = new Server(server , {
-    cors: {
-        origin: "http://localhost:5173",
-        methods: ["GET", "POST"]
-        }
-})
+// const io = new Server(server , {
+//     cors: {
+//         origin: "http://localhost:5173",
+//         methods: ["GET", "POST"]
+//         }
+// })
 
 app.use(express.json())
 app.use(cors({origin : true , credentials : true}))
@@ -257,11 +260,11 @@ app.post("/getMsg",(req,res) => {
 //     })
 // })
 
-io.on("connection",(socket) => {
-    socket.on("send_message",(message) => {
-        socket.broadcast.emit("receive_message",message)
-    })
-})
+// io.on("connection",(socket) => {
+//     socket.on("send_message",(message) => {
+//         socket.broadcast.emit("receive_message",message)
+//     })
+// })
 
 
 
@@ -270,6 +273,6 @@ app.listen(5173 , () => {
 })
 
 
-server.listen(5175 , () => {
-    console.log("server is running on port 5175")
-})
+// server.listen(5175 , () => {
+//     console.log("server is running on port 5175")
+// })
