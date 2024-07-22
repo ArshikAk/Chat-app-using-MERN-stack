@@ -4,12 +4,11 @@ const mongoose = require("mongoose")
 
 
 const app = express()
-const app1 = express()
 
 const http = require("http")
 const {Server} = require("socket.io")
 
-app1.use(cors({
+app.use(cors({
     origin: ["https://chat-app-using-mern-stack.vercel.app/"],
     credentials: true
 }))
@@ -24,7 +23,10 @@ const server = http.createServer(app1)
 // })
 
 app.use(express.json())
-app.use(cors({origin : true , credentials : true}))
+app.use(cors({
+    origin: ["https://chat-app-using-mern-stack.vercel.app"],
+    credentials: true
+}))
 
 mongoose.connect("mongodb+srv://Arshik:ammukutty123@chatapp.upoqts6.mongodb.net/?retryWrites=true&w=majority&appName=ChatApp");
 
