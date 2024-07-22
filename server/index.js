@@ -21,7 +21,8 @@ const port = process.env.port || 5173;
 
 app.use(express.json())
 app.use(cors({
-    origin: true,
+    origin: ["https://chat-app-using-mern-stack.vercel.app/"],
+    methods: ["GET", "POST"],
     credentials: true
 }))
 
