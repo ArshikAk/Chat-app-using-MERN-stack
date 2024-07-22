@@ -26,7 +26,7 @@ const server = http.createServer(app1)
 app.use(express.json())
 app.use(cors({origin : true , credentials : true}))
 
-mongoose.connect("mongodb://127.0.0.1:27017/chat");
+mongoose.connect("mongodb+srv://Arshik:ammukutty123@chatapp.upoqts6.mongodb.net/?retryWrites=true&w=majority&appName=ChatApp");
 
 const userModel = require("./userData")
 const chatModel = require("./chatData")
