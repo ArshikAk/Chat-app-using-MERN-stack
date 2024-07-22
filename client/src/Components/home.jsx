@@ -29,7 +29,7 @@ function Home()
     let email = localStorage.getItem("email");
 
     useEffect(() => {
-        axios.post("http://127.0.0.1:5173/contact",{email})
+        axios.post("https://chat-app-api-olive.vercel.app/contact",{email})
         .then(result => {
             let variable = result.data.contacts
             setContact(variable);
@@ -41,7 +41,7 @@ function Home()
     },[])
 
     useEffect(() => {
-        axios.post("http://127.0.0.1:5173/getMsg",{email,currentReceiver})
+        axios.post("https://chat-app-api-olive.vercel.app/getMsg",{email,currentReceiver})
         .then(result => {
             if(result.data == "noMsgFound")
             {
@@ -60,7 +60,7 @@ function Home()
     })
 
     // useEffect(() => {
-    //     axios.get("http://127.0.0.1:5173/getContactStatus")
+    //     axios.get("https://chat-app-api-olive.vercel.app/getContactStatus")
     //     .then(result => {
     //         let temp = result.data
     //         let temp2 = []
@@ -81,7 +81,7 @@ function Home()
 
     // useEffect(() => {
     //     window.addEventListener("beforeunload",() => {
-    //         axios.post("http://127.0.0.1:5173/onlineStatus",{email})
+    //         axios.post("https://chat-app-api-olive.vercel.app/onlineStatus",{email})
     //         .then(result => {
     //             console.log(result.data)
     //         })
@@ -103,7 +103,7 @@ function Home()
             }
 
         else{
-            axios.post("http://127.0.0.1:5173/chats",{email,currentReceiver,msg})
+            axios.post("https://chat-app-api-olive.vercel.app/chats",{email,currentReceiver,msg})
             .then(result => {
                 console.log(result)
             })
@@ -135,7 +135,7 @@ function Home()
                 alert("Contact already existed")
             }
             else{
-                axios.post("http://127.0.0.1:5173/addContact",{email , contactName})
+                axios.post("https://chat-app-api-olive.vercel.app/addContact",{email , contactName})
                 .then((result) => {
                     console.log(result)
                 })

@@ -31,7 +31,7 @@ function Login() {
             return false
         }
 
-        axios.post("http://127.0.0.1:5173/",{email,password})
+        axios.post("https://chat-app-api-olive.vercel.app/",{email,password})
             .then(result => {
                 console.log(result.data)
                 if(result.data === "accepted"){
