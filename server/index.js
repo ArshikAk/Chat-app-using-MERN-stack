@@ -33,6 +33,10 @@ const chatModel = require("./chatData")
 const contactModel = require("./contactData")
 const statusModel = require("./statusData")
 
+app.get("/",(req,res) => {
+    res.send("Hello World")
+})
+
 app.post("/",(req,res) => {
     const {email,password} = req.body
 
