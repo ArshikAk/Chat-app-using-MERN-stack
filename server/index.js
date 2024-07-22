@@ -18,7 +18,7 @@ const server = http.createServer(app1)
 //         }
 // })
 
-const port = process.env.PORT || 5173;
+
 
 app.use(express.json())
 app.use(cors({
@@ -27,7 +27,13 @@ app.use(cors({
     credentials: true
 }))
 
-mongoose.connect("mongodb+srv://Arshik:ammukutty123@chatapp.upoqts6.mongodb.net/?retryWrites=true&w=majority&appName=ChatApp");
+mongoose.connect(process.env.MONGODB_URI)
+.then(() => {
+    const PORT = process.env.PORT || 5173;
+    app.listen(PORT , () => {
+        console.log("server is running on port 5173")
+    })
+})
 
 const userModel = require("./userData")
 const chatModel = require("./chatData")
@@ -273,9 +279,7 @@ app.post("/getMsg",(req,res) => {
 
 
 
-app.listen(port , () => {
-    console.log("server is running on port 5173")
-})
+
 
 
 // server.listen(5175 , () => {
