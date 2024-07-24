@@ -56,6 +56,8 @@ function Register(){
                 document.getElementById("userError").style.display = "block"
             }
             else{
+                let status = "Offline"
+                axios.post("http://127.0.0.1:5173/status",{email,status})
                 navigate("/",{replace:true})
                 alert("Registration Successfully Completed")
             }

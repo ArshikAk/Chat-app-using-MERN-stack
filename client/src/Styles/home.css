@@ -1,13 +1,16 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    overflow: hidden;
+}
 
 .home{
     background-color: white;
-    width: 80vw;
-    height: 80vh;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    margin: 10vh 10vw;
     z-index: 0;
-    border: 2px solid black;
 }
 
 .nav{
@@ -15,8 +18,6 @@
     color: white;
     padding: 15px 0px;
     text-align: center;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
 }
 
 .chat{
@@ -25,91 +26,186 @@
 
 .left{
     position: relative;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
-    width: 50%;
-    height: 73vh;
+    border: 1px solid gray;
+    width: 30%;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
 }
 
 .right{
     position: relative;
-    border-bottom: 1px solid black;
+    border: 1px solid gray;
+    /* border-bottom: 1px solid gray; */
     z-index: 1;
-    width: 50%;
-    height: 73vh;
-    background-color: limegreen;
+    width: 70%;
+    /* height: 73vh; */
+    background-color: black;
 }
 
 .send{
-    padding: 10px;
+    padding: 20px;
     margin: 10px;
     width: 50%;
     text-wrap: wrap;
     border: 1px solid black;
-    background-color: white;
-    border-radius: 15px;
+    background-color: #00A3FF;
+    color: white;
     float: right;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .receive{
-    padding: 10px;
+    padding: 20px;
     margin: 10px;
     width: 50%;
     text-wrap: wrap;
     border: 1px solid black;
-    background-color: white;
-    border-radius: 15px;
+    background-color: rgb(94, 90, 90);
+    color: white;
     float: left;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 
 .input-field{
     width: 80%;
     height: 50px;
+    background-color: black;
+    border: 1px solid gray;
+    color: white;
+    padding-left: 30px;
+    margin: 0;
 }
 
 .send-btn{
     width: 20%;
     height: 50px;
+    background-color: #00A3FF;
+    color: white;
+    margin: 0%;
 }
 
 .messages{
-    height: 61vh;
+    display: block;
+    height: 85vh;
+    background: url("../assets/bg3.jpg");
+    background-size: cover;
     overflow: auto;
 }
 
 .left-nav{
-    text-align: center;
-    background-color: blue;
-    color: white;
-    padding: 10px 0px;
+    background-color: black;
+    color : rgb(36, 162, 212);
+    padding: 20px 10px;
+    border: 1px solid grey;
+    height: 70px;
+    display: flex;
+}
+.left-nav img{
+    margin: 0px 10px;
 }
 
-.contacts{
-    height: 66vh;
-    overflow-y: auto;
+.right-nav{
+    background-color: black;
+    color: rgb(36, 162, 212);
+    padding: 15px 40px;
+    border: 1px solid grey;
+    height: 70px;
+}
+
+.right-nav span{
+    font-size: medium;
+    margin: 5px 0px;
 }
 
 .contact{
-    padding: 10px 20px;
-    margin: 0;
-    border: 1px solid black;
-    border-top: none;
+    margin: 0px;
     width: 100%;
-}
-
-.contact:hover{
-    background-color: lime;
+    background-color: black;
+    border: 1px solid gray;
+    color: aqua;
+    text-align: left;
+    padding-left: 20px;
 }
 
 .list{
     display: flex;
     flex-direction: column;
+    height: 85vh;
+    background: url("../assets/bg1.jpg");
+    background-size: cover;
 }
 
-.right-nav{
-    text-align: center;
-    background-color: purple;
-    color: white;
-    padding: 10px 0px;
+.Offline{
+    color: red;
+}
+
+.Online{
+    color: rgb(12, 241, 12);
+}
+
+.contact-details{
+    display: flex;
+}
+
+.left-side{
+    background-color: white;
+    height: 60px;
+    width: 60px;
+    border-radius: 35px;
+    margin-top: 7px;
+}
+
+.left-side img{
+    height: 60px;
+    width: 60px;
+}
+
+.right-side{
+    margin-left: 20px;
+}
+
+.search-bar{
+    margin: 0;
+    padding: 0;
+}
+
+#search{
+    width: 100%;
+}
+
+.contact-details-nav{
+    display: flex;
+    justify-content: start;
+    padding: 0;
+    margin: 0;
+}
+
+.left-side-nav{
+    background-color: white;
+    height: 45px;
+    width: 45px;
+    border-radius: 35px;
+}
+
+.left-side-nav img{
+    height: 45px;
+    width: 45px;
+}
+
+.right-side-nav{
+   margin-left: 20px;
+}
+
+.right-side-nav span{
+    font-size: 20px;
+}
+
+.messages ::after{
+    clear: both;
 }

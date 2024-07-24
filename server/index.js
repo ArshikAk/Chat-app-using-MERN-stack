@@ -39,24 +39,24 @@ app.post("/",(req,res) => {
         {
             if(user.password == password)
             {
-                // statusModel.findOne({email : email})
-                // .then((result) => {
-                //     if(result)
-                //     {
-                //         result.status = "Online"
-                //         result.save()
-                //     }
-                //     else
-                //     {
-                //         statusModel.create({
-                //             email : email,
-                //             status : true
-                //         })
-                //     }
-                // })
-                // .catch((err) =>{
-                //     console.log(`status error : ${err}`)
-                // })
+                statusModel.findOne({email : email})
+                .then((result) => {
+                    if(result)
+                    {
+                        result.status = "Online"
+                        result.save()
+                    }
+                    else
+                    {
+                        statusModel.create({
+                            email : email,
+                            status : "Offline"
+                        })
+                    }
+                })
+                .catch((err) =>{
+                    console.log(`status error : ${err}`)
+                })
                 res.json("accepted");
             }
             else{
@@ -134,9 +134,13 @@ app.post("/addContact",(req , res) => {
 
 app.post("/contact", (req,res) => {
     const {email} = req.body
-    contactModel.findOne({email : email})
+    userModel.find()
     .then((result) => {
-        res.json(result)
+        let temp = []
+        result.forEach((data) => {
+            temp.push(data.email)
+        })
+        res.json(temp)
     })
     .catch((err) => {
         console.log(err)
@@ -171,32 +175,35 @@ app.post("/chats",(req,res) => {
                 message : [newMsg]
         })
         }
-                chatModel.findOne({sender : newEmail, receiver : newReceiver})
+        if(newEmail != newReceiver)
+        {
+            chatModel.findOne({sender : newEmail, receiver : newReceiver})
                 .then((result) => {
-                if(result)
-                {
-                    let newMsg = {
-                        message : msg,
-                        type : "receive"
+                    if(result)
+                    {
+                        let newMsg = {
+                            message : msg,
+                            type : "receive"
+                        }
+                        result.message.push(newMsg)
+                        result.save()
                     }
-                    result.message.push(newMsg)
-                    result.save()
-                }
-            else{
-                let newMsg = {
-                    message : msg,
-                    type : "receive"
-                }
-                chatModel.create({
-                    sender : newEmail,
-                    receiver : newReceiver,
-                    message : [newMsg]
+                    else{
+                        let newMsg = {
+                            message : msg,
+                            type : "receive"
+                        }
+                        chatModel.create({
+                            sender : newEmail,
+                            receiver : newReceiver,
+                            message : [newMsg]
+                        })
+                    }
                 })
-                }
-            })
-        .catch((err) => {
-            console.log(err)
-        })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
     })
     .catch((err) => {
         console.log(err)
@@ -220,42 +227,37 @@ app.post("/getMsg",(req,res) => {
     })
 })
 
-// app.post("/onlineStatus",(req,res) => {
-//     const {email} = req.body
-//     statusModel.findOne({email : email})
-//     .then((result) => {
-//         if(result)
-//         {
-//             result.status = "Offline"
-//             result.save()
-//         }
-//         else{
-//             statusModel.create({
-//                 email : email,
-//                 status : "Offline"
-//             })
-//         }
-//     })
-//     .catch((err) => {
-//         console.log(err)
-//     })
-// })
+app.post("/status",(req,res) => {
+    const {email , status} = req.body
+    statusModel.findOne({email : email})
+    .then((result) => {
+        if(result)
+        {
+            result.status = status
+            result.save()
+        }
+        else{
+            statusModel.create({
+                email : email,
+                status : status
+            })
+        }
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+})
 
-// app.get("/getContactStatus",(req,res) => {
-//     statusModel.find()
-//     .then((result) => {
-//         if(result)
-//         {
-//             res.json(result)
-//         }
-//         else{
-//             res.json("noStatusFound")
-//         }
-//     })
-//     .catch((err) => {
-//         console.log(err)
-//     })
-// })
+app.get("/contactStatus",(req,res) => {
+    statusModel.find()
+    .then((result) => {
+        res.json(result)
+        })
+    .catch((err) => {
+            console.log(err)
+    })
+})
+
 
 io.on("connection",(socket) => {
     socket.on("send_message",(message) => {
