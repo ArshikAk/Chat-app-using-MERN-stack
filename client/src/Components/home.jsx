@@ -2,6 +2,10 @@ import axios from "axios"
 import {useState , useEffect , useRef} from "react";
 import '../Styles/home.css'
 
+import logo from "../assets/logo.png"
+import personLogo from "../assets/person.png"
+import contactLogo from "../assets/contactLogo.png"
+
 import {io} from "socket.io-client"
 
 const socket = io("http://localhost:5175")
@@ -12,27 +16,31 @@ function Home()
     document.title = "Home Page"
 
     const [msg , setMsg] = useState("");
-    // const [sendMsg,setSendMsg] = useState([])
     const [receiveMsg, setReceiveMsg] = useState([])
     const [totalMsg, setTotalMsg] = useState([])
 
     const [contact , setContact] = useState([])
-    const [contactName , setContactName] = useState()
+    const [contactName , setContactName] = useState("")
 
     const [currentReceiver, setCurrentReceiver] = useState("Chats")
+    const [currentReceiverStatus, setCurrentReceiverStatus] = useState("")
 
-    // const [contactStatus , setContactStatus] = useState([])
+    const [contactStatus , setContactStatus] = useState([])
+
+    const [tempContact , setTempContact] = useState([])
 
     const targetRef = useRef(null)
 
 
     let email = localStorage.getItem("email");
 
+
     useEffect(() => {
-        axios.post("https://chat-app-api-olive.vercel.app/contact",{email})
+        axios.post("http://127.0.0.1:5173/contact")
         .then(result => {
-            let variable = result.data.contacts
+            let variable = result.data
             setContact(variable);
+            console.log(contact)
         })
         .catch(err => {
             console.log(err)
@@ -41,7 +49,7 @@ function Home()
     },[])
 
     useEffect(() => {
-        axios.post("https://chat-app-api-olive.vercel.app/getMsg",{email,currentReceiver})
+        axios.post("http://127.0.0.1:5173/getMsg",{email,currentReceiver})
         .then(result => {
             if(result.data == "noMsgFound")
             {
@@ -59,40 +67,47 @@ function Home()
         })
     })
 
-    // useEffect(() => {
-    //     axios.get("https://chat-app-api-olive.vercel.app/getContactStatus")
-    //     .then(result => {
-    //         let temp = result.data
-    //         let temp2 = []
+    useEffect(() => {
+        axios.get("http://127.0.0.1:5173/contactStatus")
+        .then(result => {
+            let temp = result.data
+            let temp2 = []
+            let temp3 = []
+            if(contactName == "")
+            {
+                temp3 = contact
+            }
+            else{
+                temp3 = tempContact
+            }
+            temp.forEach((data) => {
+                if(temp3.includes(data.email))
+                {
+                    temp2.push(data)
+                }
+            })
+            setContactStatus(temp2)
+        })
+        .catch(err => {
+            console.log(err)
+            console.log("contacts error");
+        })
+    })
 
-    //         temp.forEach((data) =>{
-    //             if(contact.includes(data.email))
-    //             {
-    //                 temp2.push(data)
-    //             }
-    //         })
-    //         setContactStatus(temp2)
-    //     })
-    //     .catch(err => {
-    //         console.log(`getContactStatus error : ${err}`)
-    //     })
+    useEffect(() => {
 
-    // })
+        let temp = []
+            contact.forEach((ele) => {
+                if(ele.includes(contactName))
+                {
+                    temp.push(ele)
+                }
+            })
+            setTempContact(temp)
 
-    // useEffect(() => {
-    //     window.addEventListener("beforeunload",() => {
-    //         axios.post("https://chat-app-api-olive.vercel.app/onlineStatus",{email})
-    //         .then(result => {
-    //             console.log(result.data)
-    //         })
-    //         .catch(err => {
-    //             console.log(`Online Status error : ${err}`)
-    //         })
-    //     })
-    // })
+    },[contactName])
 
     const sendMessage = () => {
-
         if(msg == "")
         {
             alert("Enter a Valid message");
@@ -103,7 +118,7 @@ function Home()
             }
 
         else{
-            axios.post("https://chat-app-api-olive.vercel.app/chats",{email,currentReceiver,msg})
+            axios.post("http://127.0.0.1:5173/chats",{email,currentReceiver,msg})
             .then(result => {
                 console.log(result)
             })
@@ -116,35 +131,21 @@ function Home()
     }
 
 
-    const addContact = () => {
+    const searchContact = () => {
         if(contactName == "")
         {
-            alert("Please enter a valid contact Email ID")
+            alert("Please enter a Contact Name")
         }
         else
         {
-            let flag = 0;
+            let temp = []
             contact.forEach((ele) => {
-                if(ele == contactName)
+                if(ele.includes(contactName))
                 {
-                    flag = 1;
+                    temp.push(ele)
                 }
             })
-            if(flag)
-            {
-                alert("Contact already existed")
-            }
-            else{
-                axios.post("https://chat-app-api-olive.vercel.app/addContact",{email , contactName})
-                .then((result) => {
-                    console.log(result)
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
-                window.location.reload()
-            }
-            setContactName("")
+            setTempContact(temp)
         }
     }
 
@@ -161,55 +162,89 @@ function Home()
         setTotalMsg([...totalMsg,newMsg])
         
         })
+
+    window.addEventListener("load", () => {
+            let status = "Online"
+            axios.post("http://127.0.0.1:5173/status",{email , status})
+            .then((result) => {
+                console.log(result)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        })
+
+    window.addEventListener("beforeunload", () => {
+        let status = "Offline"
+        axios.post("http://127.0.0.1:5173/status",{email , status})
+        .then((result) => {
+            console.log(result)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    })
     
 
     return(
         <div className="home">
-            <div className="nav">
-                <h2>Chat Application</h2>
-            </div>
-
             <div className="chat">
                 <div className="left">
-                    <div className="contacts">
-                        <div className="left-nav">
+                    <div className="left-nav">
+                            <img src={contactLogo} alt=""/>
                             <h2>Contacts</h2>
-                        </div>
-                        <div className="list">
+                    </div>
+                    <div className="search-bar">
+                        <input type="text" placeholder="Search Contacts" className="input-field" onChange={(e) => setContactName(e.target.value)}/>
+                        <button className="send-btn" onClick={searchContact}>Search</button>
+                    </div>
+                    <div className="list">
                             {
-                                contact.map((data,index) => {
+                                contactStatus.map((data,index) => {
                                 return(
                                     <>
-                                        <button key={index} className="contact" value={data} onClick={() => setCurrentReceiver(data)}>{data}</button>
+                                        <button key={index} className="contact" value={data.email} onClick={() => {
+                                            setCurrentReceiver(data.email)
+                                            setCurrentReceiverStatus(data.status)
+                                        }} style={currentReceiver == data.email ? {backgroundColor : "rgb(97, 91, 91)",color : "white", border : "2px solid black"} : {display : "block"}}>
+
+                                            <div className="contact-details">
+                                                <div className="left-side">
+                                                    <img src={personLogo} alt="" />
+                                                </div>
+                                                <div className="right-side">
+                                                    <p> {data.email}</p>
+                                                    <p className={data.status}>{`${data.status}`}</p>
+                                                </div>
+                                            </div>
+                                        </button>
                                     </>
                                 )
                                 })
                             }
-                            {/* {
-                                contactStatus.map((data,index) => {
-                                return(
-                                    <>
-                                        <button key={index} className="contact" value={data.email} onClick={() => setCurrentReceiver(data.email)}>{`${data.email} : ${data.status}`}</button>
-                                    </>
-                                )
-                                })
-                            } */}
-                        </div>
-                    </div>
-                    <div className="input">
-                            <input type="text" placeholder="Enter the Email ID" className="input-field" value={contactName} onChange={(e) => setContactName(e.target.value)}/>
-                            <button className="send-btn" onClick={addContact}>Add</button>
                     </div>
                 </div>
                 <div className="right">
                     <div className="right-nav">
-                            <h2>{currentReceiver}</h2>
+                        <div className="contact-details-nav">
+                                <div className="left-side-nav" style={currentReceiver == "Chats" ? {backgroundColor : "black"} : {backgroundColor : "white"}}>
+                                    <img src={currentReceiver == "Chats" ? logo : personLogo} alt="" />
+                                </div>
+                                <div className="right-side-nav">
+                                    <span style={currentReceiver == "Chats" ? {textAlign : "center" , padding : "10px",fontSize : "35px"} : {textAlign : "start"}}> {currentReceiver}</span>
+                                    <br />
+                                    <span className={currentReceiverStatus}>{`${currentReceiverStatus}`}</span>
+                                </div>
+                            </div>
                         </div>
-                    <div className="messages" ref={targetRef}>
+                    <div className="messages" ref={targetRef} id="messages">
                         {
                         totalMsg.map((msg,index) => {
                             return(
-                                <div className={msg.type == "send" ? "send" : "receive"} key= {index}>{msg.message}</div>
+                                <>
+                                    {/* <span key={index}>{msg.type == "send" ? {email} : {currentReceiver}}</span> */}
+                                    <div className={msg.type == "send" ? "send" : "receive"} key= {index}>{msg.message}</div>
+                                </>
                                 )
                                 })
                         }

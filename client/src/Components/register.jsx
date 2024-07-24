@@ -49,13 +49,15 @@ function Register(){
             return false
         } 
 
-        axios.post("https://chat-app-api-olive.vercel.app/register",{name,email,password})
+        axios.post("http://127.0.0.1:5173/register",{name,email,password})
         .then(result =>{
             if(result.data === "existed")
             {
                 document.getElementById("userError").style.display = "block"
             }
             else{
+                let status = "Offline"
+                axios.post("http://127.0.0.1:5173/status",{email,status})
                 navigate("/",{replace:true})
                 alert("Registration Successfully Completed")
             }
