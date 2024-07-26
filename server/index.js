@@ -1,6 +1,8 @@
 const express = require("express")
 const cors = require("cors")
 const mongoose = require("mongoose")
+const multer = require("multer")
+const path = require("path")
 
 
 const app = express()
@@ -22,6 +24,7 @@ const io = new Server(server , {
 
 app.use(express.json())
 app.use(cors({origin : true , credentials : true}))
+app.use(express.static("uploads"))
 
 mongoose.connect("mongodb://127.0.0.1:27017/chat");
 
@@ -29,6 +32,20 @@ const userModel = require("./userData")
 const chatModel = require("./chatData")
 const contactModel = require("./contactData")
 const statusModel = require("./statusData")
+const notificationModel = require("./notificationData")
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "./uploads")
+    },
+    filename: function (req, file, cb) {
+            cb(null,file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({
+    storage: storage
+})
 
 app.post("/",(req,res) => {
     const {email,password} = req.body
@@ -69,7 +86,7 @@ app.post("/",(req,res) => {
     })
 })
 
-app.post("/register",(req,res) => {
+app.post("/register",upload.single("file"),(req,res) => {
     const {name,email,password} = req.body
 
     userModel.findOne({email : email})
@@ -83,7 +100,8 @@ app.post("/register",(req,res) => {
             userModel.create({
                 name : name,
                 email : email,
-                password : password
+                password : password,
+                image : req.file.filename
             })
             .then((result) => {
                 res.json("success")
@@ -138,7 +156,7 @@ app.post("/contact", (req,res) => {
     .then((result) => {
         let temp = []
         result.forEach((data) => {
-            temp.push(data.email)
+            temp.push(data)
         })
         res.json(temp)
     })
@@ -255,6 +273,80 @@ app.get("/contactStatus",(req,res) => {
         })
     .catch((err) => {
             console.log(err)
+    })
+})
+
+app.post("/profile",(req,res) => {
+    const {email} = req.body
+    userModel.findOne({email : email})
+    .then((result) => {
+        res.json(result)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+})
+
+app.post("/updateProfile",upload.single("file"),(req,res) => {
+    const {name , email , password} = req.body
+    userModel.updateOne({email : email},
+        {
+            name : name , 
+            password : password,
+            image : req.file.filename
+    })
+    .then((result) => {
+        res.json("updated")
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+})
+
+app.post("/sendNotification",(req,res) => {
+    const { email , currentReceiver} = req.body
+
+    notificationModel.findOne({email : currentReceiver})
+    .then((result) => {
+        if(result){
+            result.notification.push(email)
+            result.save()
+        }
+        else{
+            notificationModel.create({email : currentReceiver , notification : [email]})
+            .then((result) => {
+                res.json("added")
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        }
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+})
+
+app.post("/getNotification",(req,res) => {
+    const { email } = req.body
+    notificationModel.findOne({email : email})
+    .then((result) => {
+        if(result)
+        {
+            if(result.notification.length > 0)
+            {
+                let notify = result.notification.pop()
+                result.save()
+                res.json(notify)
+            }
+            else{
+                res.json("nothing")
+            }
+        }
+        else
+        {
+            res.json("nothing")
+        }
     })
 })
 

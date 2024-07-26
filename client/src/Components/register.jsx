@@ -12,6 +12,7 @@ function Register(){
     const [email,setEmail] = useState()
     const [password,setPassword] = useState()
     const [cpassword,setCPassword] = useState()
+    const [image,setImage] = useState()
     const navigate = useNavigate()
 
 
@@ -24,6 +25,11 @@ function Register(){
         document.getElementById("confirmPasswordError").style.display = "none";
         document.getElementById("userError").style.display = "none";
 
+        const formData = new FormData()
+        formData.append("file", image)
+        formData.append("email",email)
+        formData.append("name",name)
+        formData.append("password",password)
 
         if(!name)
         {
@@ -49,7 +55,7 @@ function Register(){
             return false
         } 
 
-        axios.post("http://127.0.0.1:5173/register",{name,email,password})
+        axios.post("http://127.0.0.1:5173/register",formData)
         .then(result =>{
             if(result.data === "existed")
             {
@@ -97,6 +103,10 @@ function Register(){
                         <input id="confirmPassword" type="password" placeholder="Confirm Password" onChange={(e) => {setCPassword(e.target.value)}}/>
                         <br />
                         <span id="confirmPasswordError" className="message">Password doesnt match</span>
+                        <br />
+                        <label>Upload Profile Picture :</label>
+                        <br />
+                        <input id="profile" type="file" required onChange={(e) => {setImage(e.target.files[0])}}/>
                         <br />
                         <p>Already a Member
                             <Link to="/" id="link">Login</Link>
