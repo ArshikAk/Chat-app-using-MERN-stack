@@ -26,7 +26,7 @@ app.use(express.json())
 app.use(cors({origin : true , credentials : true}))
 app.use(express.static("uploads"))
 
-mongoose.connect("mongodb://127.0.0.1:27017/chat");
+mongoose.connect("mongodb+srv://Arshik:ammukutty123@chatapp.upoqts6.mongodb.net/?retryWrites=true&w=majority&appName=ChatApp");
 
 const userModel = require("./userData")
 const chatModel = require("./chatData")
@@ -46,6 +46,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage
+})
+
+app.get("/",(req,res) => {
+    res.send("Welcome to Chat App")
 })
 
 app.post("/",(req,res) => {
@@ -465,6 +469,6 @@ app.listen(5173 , () => {
 })
 
 
-server.listen(5175 , () => {
-    console.log("server is running on port 5175")
-})
+// server.listen(5175 , () => {
+//     console.log("server is running on port 5175")
+// })
