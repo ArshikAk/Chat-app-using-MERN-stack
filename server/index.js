@@ -33,6 +33,7 @@ const chatModel = require("./chatData")
 const contactModel = require("./contactData")
 const statusModel = require("./statusData")
 const notificationModel = require("./notificationData")
+const groupModel = require("./groupChatData")
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -318,12 +319,12 @@ app.post("/sendNotification",(req,res) => {
                 res.json("added")
             })
             .catch((err) => {
-                console.log(err)
+                console.log(`send notification 1`)
             })
         }
     })
     .catch((err) => {
-        console.log(err)
+        console.log(`send notification 2`)
     })
 })
 
@@ -348,8 +349,108 @@ app.post("/getNotification",(req,res) => {
             res.json("nothing")
         }
     })
+    .catch((err) => {
+        console.log(`get notification`)
+    })
 })
 
+app.post("/deleteMessage",(req,res) => {
+
+    const {email , currentReceiver , index} = req.body;
+
+    const newEmail = currentReceiver
+    const newReceiver = email
+
+    chatModel.findOne({sender : email, receiver : currentReceiver})
+    .then((result) => {
+        if(result)
+        {
+            result.message.splice(index,1)
+            result.save()
+            res.json("deleted")
+        }
+        if(newEmail != newReceiver)
+        {
+            chatModel.findOne({sender : newEmail, receiver : newReceiver})
+                .then((result) => {
+                    if(result)
+                    {
+                        result.message.splice(index,1)
+                        result.save()
+                    }
+                })
+                .catch((err) => {
+                    console.log(`delete message : ${err}`)
+                })
+        }
+    })
+    .catch((err) => {
+        console.log(`delete message : ${err}`)
+    })
+
+})
+
+app.post("/createGroup",(req,res) => {
+    const {name ,description , members} = req.body
+
+    groupModel.create({
+        name : name,
+        description : description,
+        members : members
+    })
+    .then((result) => {
+        console.log(result)
+        res.json("created")
+    })
+    .catch((err) => {
+        console.log(`create group : ${err}`)
+    })
+})
+
+app.get("/getGroups",(req,res) => {
+    groupModel.find()
+    .then((result) => {
+        res.json(result)
+    })
+    .catch((err) => {
+        console.log(`get groups : ${err}`)
+    })
+})
+
+app.post("/sendGroupMessage" , (req,res) => {
+    const {email , currentReceiver , msg} = req.body
+
+    groupModel.findOne({name : currentReceiver})
+    .then((result) => {
+        let newMsg = {
+            message : msg,
+            type : email
+        }
+        result.message.push(newMsg)
+        result.save()
+    })
+    .catch((err) => {
+        console.log(`send groups message : ${err}`)
+    })
+
+})
+
+app.post("/getGroupMsg",(req,res) => {
+    const {currentReceiver} = req.body
+    groupModel.findOne({name : currentReceiver})
+    .then((result) => {
+        if(result)
+        {
+            res.json(result.message)
+        }
+        else{
+            res.json("noMsgFound")
+        }
+    })
+    .catch((err) => {
+        console.log(`get group message : ${err}`)
+    })
+})
 
 io.on("connection",(socket) => {
     socket.on("send_message",(message) => {

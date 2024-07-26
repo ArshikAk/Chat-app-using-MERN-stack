@@ -96,6 +96,7 @@ body{
     background: url("../assets/bg3.jpg");
     background-size: cover;
     overflow: auto;
+    scrollbar-width: none;
 }
 
 .left-nav{
@@ -147,6 +148,8 @@ body{
     height: 85vh;
     background: url("../assets/bg1.jpg");
     background-size: cover;
+    overflow: auto;
+    scrollbar-width: none;
 }
 
 .Offline{
@@ -232,6 +235,8 @@ body{
     border: none;
     text-align: center;
     margin: 0;
+    padding: 0;
+    margin-right: 10px;
     font-size: x-large;
 }
 

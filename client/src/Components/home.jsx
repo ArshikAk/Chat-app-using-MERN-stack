@@ -3,7 +3,7 @@ import {useState , useEffect , useRef} from "react";
 import '../Styles/home.css'
 
 import logo from "../assets/logo.png"
-// import personLogo from "../assets/person.png"
+import personLogo from "../assets/person.png"
 
 
 import { useNavigate } from "react-router-dom";
@@ -38,6 +38,9 @@ function Home()
 
     const [profile , setProfile] = useState([])
 
+    const [groups , setGroups] = useState([])
+    const [isGroup , setIsGroup] = useState(false)
+
 
     let email = localStorage.getItem("email");
 
@@ -67,24 +70,62 @@ function Home()
     },[])
 
     useEffect(() => {
-        axios.post("http://127.0.0.1:5173/getMsg",{email,currentReceiver})
-        .then(result => {
-            if(result.data == "noMsgFound")
-            {
-                setTotalMsg([])
-            }
-            else{
-                let val = result.data.message
-                setTotalMsg(val)
-            }
+        if(isGroup)
+        {
+            axios.post("http://127.0.0.1:5173/getGroupMsg",{currentReceiver})
+            .then(result => {
+                if(result.data == "noMsgFound")
+                {
+                    setTotalMsg([])
+                }
+                else{
+                    let temp = result.data
+                    let temp1 = []
+                    temp.forEach((data) =>{
+                        let newMsg = {
+                            message : data.message
+                        }
+                        if(data.type == email)
+                        {
+                            newMsg.type = "send"
+                        }
+                        else
+                        {
+                            newMsg.type = "receive"
+                        }
+                        temp1.push(newMsg)
+                    })
+                    setTotalMsg(temp1)
+                }
 
-            setMessageLength(totalMsg.length)
-            // let lastItem = targetRef.current.lastElementChild;
-            // lastItem.scrollIntoView(false);
-        })
-        .catch(err => {
-            console.log(`Get Msg error : ${err}`);
-        })
+                setMessageLength(totalMsg.length)
+                // let lastItem = targetRef.current.lastElementChild;
+                // lastItem.scrollIntoView(false);
+            })
+            .catch(err => {
+                console.log(`Get Msg error : ${err}`);
+            })
+        }
+        else{
+            axios.post("http://127.0.0.1:5173/getMsg",{email,currentReceiver})
+            .then(result => {
+                if(result.data == "noMsgFound")
+                {
+                    setTotalMsg([])
+                }
+                else{
+                    let val = result.data.message
+                    setTotalMsg(val)
+                }
+
+                setMessageLength(totalMsg.length)
+                // let lastItem = targetRef.current.lastElementChild;
+                // lastItem.scrollIntoView(false);
+            })
+            .catch(err => {
+                console.log(`Get Msg error : ${err}`);
+            })
+        }
     })
 
     useEffect(() => {
@@ -162,7 +203,26 @@ function Home()
         .catch(err => {
             console.log(err)
         })
-    })
+    },[])
+
+    useEffect(() => {
+        axios.get("http://127.0.0.1:5173/getGroups")
+        .then(result => {
+            let temp = result.data
+            let temp1 = []
+            temp.forEach((data) => {
+                if(data.members.includes(email))
+                {
+                    temp1.push(data)
+                }
+            })
+            setGroups(temp1)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    },[])
+
 
 
     const sendMessage = () => {
@@ -174,7 +234,17 @@ function Home()
         {
                 alert("Select a Valid Contact");
         }
-
+        if(isGroup)
+        {
+            axios.post("http://127.0.0.1:5173/sendGroupMessage",{email , currentReceiver , msg})
+            .then(result => {
+                console.log(result)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+            setMsg("")
+        }
         else{
             axios.post("http://127.0.0.1:5173/chats",{email,currentReceiver,msg})
             .then(result => {
@@ -193,6 +263,26 @@ function Home()
             setMsg("")
         }
         
+    }
+
+    const deleteMessage = (message , index) => {
+        if(confirm(`Are you want to delete the message : ${message}`))
+        {
+            axios.post("http://127.0.0.1:5173/deleteMessage",{email , currentReceiver , index})
+            .then(result => {
+                if(result.data == "deleted")
+                {
+                    // alert("Message Deleted successfully")
+                    return;
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        }
+        else{
+            return;
+        }
     }
 
 
@@ -283,6 +373,7 @@ function Home()
                                             setCurrentReceiver(data.email)
                                             setCurrentReceiverStatus(data.status)
                                             setCurrentReceiverContact(data)
+                                            setIsGroup(false)
                                         }} style={currentReceiver == data.email ? 
                                                     {backgroundColor : "rgb(97, 91, 91)",color : "white", border : "2px solid black"} : {display : "block"}}>
 
@@ -298,6 +389,30 @@ function Home()
                                         </button>
                                     </>
                                 )
+                                })
+                            }
+                            <button className="contact" style={groups.length ? {textAlign : "center" , padding : "20px 0px"} : {display : "none"}}>Group Chats</button>
+                            {
+                                groups.map((data,index) => {
+                                    return(
+                                        <button key={index} className="contact" value={data.email} onClick={() => {
+                                                setCurrentReceiver(data.name)
+                                                setIsGroup(true)
+                                            }} style={currentReceiver == data.name ? 
+                                                    {backgroundColor : "rgb(97, 91, 91)",color : "white", border : "2px solid black"} : {display : "block"}}>
+
+                                            <div className="contact-details">
+                                                <div className="left-side">
+                                                    <img src={personLogo} alt="" />
+                                                </div>
+                                                <div className="right-side">
+                                                    <p> {data.name}</p>
+                                                    <p>{data.description}</p>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    )
+
                                 })
                             }
                     </div>
@@ -328,7 +443,8 @@ function Home()
                     <br />
                     <br />
 
-                    <button className="contact" style={{textAlign : "center"}} onClick={() => navigate("/update",)}>Edit</button>
+                    <button className="contact" style={{textAlign : "center"}} onClick={() => navigate("/update")}>Edit Profile</button>
+                    <button className="contact" style={{textAlign : "center"}} onClick={() => navigate("/group")}>Create New Group</button>
                     <button className="contact" style={{textAlign : "center"}} onClick={() => navigate("/",{replace : true})}>LogOut</button>
                 </div>
                 <div className="right">
@@ -341,12 +457,12 @@ function Home()
                                     <span style={currentReceiver == "Chats" ? {textAlign : "center" , padding : "10px",fontSize : "35px"} : {textAlign : "start"}}> 
                                         {currentReceiver}</span>
                                     <br />
-                                    <p className={currentReceiverStatus} id="status">{`${currentReceiverStatus}`}</p>
+                                    <p className={currentReceiverStatus} id="status" style={isGroup ? {display : "none"} : {display : "block"}}>{`${currentReceiverStatus}`}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="messages" style={(messagelength == 0 && currentReceiver != "Chats") ? {display : "block"} : {display : "none"}}>
+                        <div className="messages scrollable" style={(messagelength == 0 && currentReceiver != "Chats") ? {display : "block"} : {display : "none"}}>
 
                             <h2 style={
                                 {padding : "10px 0px" , textAlign : "center" , color : "white" , backgroundColor : "black" , border : "1px solid gray" }}>
@@ -361,10 +477,8 @@ function Home()
                         totalMsg.map((msg,index) => {
                             return(
                                 <>
-                                    <div className={msg.type == "send" ? "send" : "receive"} key= {index}>
+                                    <div className={msg.type == "send" ? "send" : "receive"} key= {index} onClick={() => deleteMessage(msg.message , index)}>
                                         {msg.message}
-                                        {/* <hr />
-                                        {msg.type == "send" ? email : currentReceiver} */}
                                     </div>
                                 </>
                                 )

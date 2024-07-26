@@ -1,0 +1,35 @@
+.createGroup{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid grey;
+    width: 30%;
+    text-align: center;
+    padding: 20px 10px;
+    position: absolute;
+    top: 20%;
+    left: 35%;
+    background-color: gray;
+    opacity: 0.7;
+    border-radius: 30px;
+}
+
+.createGroup form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+
+.createGroup form input{
+    margin: 0;
+}
+
+.groupFields{
+    display: flex;
+    margin: 0;
+}
+
+.groupFields .btn{
+    width: 200px;
+}
